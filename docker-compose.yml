@@ -1,0 +1,12 @@
+version: '3'
+services:
+  project:
+    container_name: project
+    build: .
+    command: quasar dev
+    volumes:
+      - .:/home/quasar/project
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=${NODE_ENV}
