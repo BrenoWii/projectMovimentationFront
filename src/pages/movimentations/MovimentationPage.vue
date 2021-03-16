@@ -1,14 +1,25 @@
 <template>
-    <div>teste</div>
+  <div>
+    <movimentationForm></movimentationForm>
+    <Movimentations></Movimentations>
+  </div>
 </template>
 
 <script lang="ts">
+import Movimentations from '../../components/Movimentations/Movimentations.vue'
+import movimentationForm from '../../components/Movimentations/MovimentationsForm.vue'
 
 export default {
   name: 'MovimentationPage',
+  components: {
+    movimentationForm,
+    Movimentations
+  },
   async mounted () {
-    const result = await this.$axios.get('/movimentations')
-    console.log(result)
+    console.log(this.$store)
+    this.$store.dispatch('movimentation/getMovimentations')
+    this.$store.dispatch('planOfBills/getPlanOfBills')
+    this.$store.dispatch('classification/getClassifications')
   }
 }
 </script>
