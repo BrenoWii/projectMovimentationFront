@@ -24,7 +24,8 @@ const Router = (/* { store, ssrContext } */) => {
   })
 
   router.beforeEach((to, from, next) => {
-    const publicPages = ['/login']
+    debugger
+    const publicPages = ['/login', '/login/create-login']
     const authRequired = !publicPages.includes(to.path)
     const loggedIn = localStorage.getItem('user')
     const logout = to.path === '/logout'

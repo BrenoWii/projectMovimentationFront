@@ -25,7 +25,7 @@
             color="primary"
             label="Entrar"
           />
-          <router-link to="/login/create-login">Criar Conta</router-link>
+          <router-link to="/login/create-login">Criar eita</router-link>
         </form>
       </div>
     </div>
