@@ -8,6 +8,7 @@ const instance = axios.create({
 instance.defaults.headers.common['Content-Type'] = 'application/json'
 
 instance.getNotifyResponse = (response) => {
+  debugger
   const data = response.data
   const message = data.message ? data.message : this.getMessageHttpCode(response)
 
@@ -33,14 +34,16 @@ instance.interceptors.request.use(
 )
 // Interceptor
 instance.interceptors.response.use(function (response) {
-  Notify.create(getMessageHttpCode(response), {
-    type: 'positive',
-    color: 'green',
-    textColor: 'white',
-    position: 'top-right',
-    timeout: 2500
-  })
-
+  const message = getMessageHttpCode(response)
+  if (message) {
+    Notify.create(getMessageHttpCode(response), {
+      type: 'positive',
+      color: 'green',
+      textColor: 'white',
+      position: 'top-right',
+      timeout: 2500
+    })
+  }
   return response
 }, function (error) {
   instance.getNotifyResponse(error.response)
@@ -52,11 +55,10 @@ instance.interceptors.response.use(function (response) {
 })
 
 const getMessageHttpCode = (response) => {
+  debugger
   switch (response.status) {
     case 201:
       return 'Processo Concluido'
-    default:
-      return 'teste'
   }
 }
 
