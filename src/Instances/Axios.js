@@ -33,7 +33,9 @@ instance.interceptors.request.use(
 )
 // Interceptor
 instance.interceptors.response.use(function (response) {
-  Notify.create(getMessageHttpCode(response), {
+  const message = getMessageHttpCode(response)
+
+  message && Notify.create(message, {
     type: 'positive',
     color: 'green',
     textColor: 'white',
@@ -56,7 +58,7 @@ const getMessageHttpCode = (response) => {
     case 201:
       return 'Processo Concluido'
     default:
-      return 'teste'
+      return false
   }
 }
 

@@ -20,6 +20,7 @@ export default {
     this.$store.dispatch('movimentation/getMovimentations')
     this.$store.dispatch('planOfBills/getPlanOfBills')
     this.$store.dispatch('classification/getClassifications')
+    this.$store.dispatch('users/getUsers')
   }
 }
 </script>

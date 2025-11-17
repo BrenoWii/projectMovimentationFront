@@ -1,9 +1,8 @@
 <template>
   <q-item
     clickable
-    tag="a"
-    target="_blank"
-    :href="link"
+    tag="router-link"
+    :to="link"
   >
     <q-item-section
       v-if="icon"

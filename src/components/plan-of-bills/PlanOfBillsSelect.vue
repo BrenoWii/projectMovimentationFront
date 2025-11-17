@@ -9,7 +9,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <PlanOfBillsForm></PlanOfBillsForm>
+            <PlanOfBillsForm @saved="openModalAdd = false"></PlanOfBillsForm>
           </q-card-section>
 
           <q-card-actions align="right">

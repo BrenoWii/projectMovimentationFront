@@ -3,11 +3,12 @@
     <q-form
       @submit="onSubmit"
       class="q-gutter-md movimentation-form__form">
-      <q-input v-model="planOfBills.description" filled type="text" hint="Descrição do Plano de Contas" />
-      <ClassificationSelect v-on:change="onClassificationSelect"></ClassificationSelect>
+      <q-input v-model="user.firstName" filled type="text" hint="Nome" />
+      <q-input v-model="user.lastName" filled type="text" hint="Sobrenome" />
+      <q-input v-model="user.email" filled type="email" hint="Email" />
+      <q-input v-model="user.password" filled type="password" hint="Senha" />
       <div>
         <q-btn label="Submit" type="submit" color="primary"/>
-        <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
       </div>
     </q-form>
 
@@ -15,26 +16,24 @@
 </template>
 
 <script>
-import ClassificationSelect from '../classification/ClassificationSelect'
 export default {
-  components: {
-    ClassificationSelect
-  },
+  name: 'UsersForm',
   data () {
     return {
-      planOfBills: {
-        description: null,
-        classification: null
+      user: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
       }
     }
   },
   methods: {
     async onSubmit () {
-      const response = await this.$axios.post('/plan-of-bills', this.planOfBills)
-      console.log(response)
+      await this.$axios.post('users', this.user)
       await this.refreshAll()
-      this.$emit('saved')
-      this.onReset && this.onReset()
+      this.$store.dispatch('users/getUsers')
+      this.reset()
     },
     async refreshAll () {
       await Promise.all([
@@ -43,12 +42,13 @@ export default {
         this.$store.dispatch('movimentation/getMovimentations')
       ])
     },
-    onClassificationSelect (classification) {
-      this.planOfBills.classification = classification.value
+    reset () {
+      this.user = { firstName: '', lastName: '', email: '', password: '' }
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
  .movimentation-form{
 

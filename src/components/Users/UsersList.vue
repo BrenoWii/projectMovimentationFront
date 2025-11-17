@@ -3,12 +3,12 @@
     <q-table
       flat
       bordered
-      title="Plano de Contas"
+      title="Usuários"
       :data="rows"
       :columns="columns"
       row-key="id"
       :pagination.sync="pagination"
-      no-data-label="Nenhum plano de contas cadastrado"
+      no-data-label="Nenhum usuário cadastrado"
     />
   </div>
 </template>
@@ -17,25 +17,26 @@
 import { mapState } from 'vuex'
 
 export default {
-  name: 'PlanOfBillsList',
+  name: 'UsersList',
   data () {
     return {
       pagination: { rowsPerPage: 10 },
       columns: [
         { name: 'id', label: 'ID', field: 'id', align: 'left', sortable: true },
-        { name: 'description', label: 'Descrição', field: 'description', align: 'left', sortable: true },
-        { name: 'classification', label: 'Classificação', field: (row) => (row.classification && row.classification.description) || row.classificationName || '-', align: 'left' }
+        { name: 'firstName', label: 'Nome', field: 'firstName', align: 'left', sortable: true },
+        { name: 'lastName', label: 'Sobrenome', field: 'lastName', align: 'left', sortable: true },
+        { name: 'email', label: 'Email', field: 'email', align: 'left', sortable: true }
       ]
     }
   },
   computed: {
-    ...mapState('planOfBills', ['planOfBills']),
+    ...mapState('users', ['users']),
     rows () {
-      return this.planOfBills || []
+      return this.users || []
     }
   }
 }
 </script>
 
 <style scoped>
- </style>
+</style>

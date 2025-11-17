@@ -9,7 +9,7 @@
           </q-card-section>
 
           <q-card-section class="q-pt-none">
-            <ClassificationForm></ClassificationForm>
+            <ClassificationForm @saved="openModalAdd = false"></ClassificationForm>
           </q-card-section>
 
           <q-card-actions align="right">

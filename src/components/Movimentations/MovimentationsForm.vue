@@ -11,6 +11,7 @@
         filled
         v-model="movimentation.value"
         label="Valor da movimentação"
+        prefix="R$"
         mask="#.##"
         fill-mask="#"
         reverse-fill-mask
@@ -45,8 +46,25 @@ export default {
   },
 
   methods: {
-    onSubmit () {
-      this.$axios.post('movimentations', { ...this.movimentation, value: Number(this.movimentation.value.replace(/\./g, '')) })
+    async onSubmit () {
+      const valueCents = this.toCents(this.movimentation.value)
+      await this.$axios.post('movimentations', { ...this.movimentation, value: valueCents })
+      await this.refreshAll()
+      this.onReset && this.onReset()
+    },
+    toCents (raw) {
+      if (raw === null || raw === undefined) return 0
+      const s = String(raw)
+      // Remove tudo que não é dígito para obter centavos
+      const digits = s.replace(/\D/g, '')
+      return digits ? parseInt(digits, 10) : 0
+    },
+    async refreshAll () {
+      await Promise.all([
+        this.$store.dispatch('classification/getClassifications'),
+        this.$store.dispatch('planOfBills/getPlanOfBills'),
+        this.$store.dispatch('movimentation/getMovimentations')
+      ])
     },
     changePlanOfBills (planOfBills) {
       this.movimentation.planOfBill = planOfBills.value

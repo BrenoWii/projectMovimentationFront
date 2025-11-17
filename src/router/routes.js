@@ -5,6 +5,24 @@ const routes = [
     redirect: '/login'
   },
   {
+    path: '/plan-of-bills',
+    component: () => import('../layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/plan-of-bills', component: () => import('../pages/plan-of-bills/PlanOfBillsPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/users',
+    component: () => import('../layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/users', component: () => import('../pages/users/UsersPage.vue')
+      }
+    ]
+  },
+  {
     path: '/login',
     component: () => import('../pages/Login/login.vue'),
     children: [
@@ -22,6 +40,15 @@ const routes = [
     children: [
       {
         path: '/movimentation', component: () => import('../pages/movimentations/MovimentationPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/classification',
+    component: () => import('../layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/classification', component: () => import('../pages/classification/ClassificationPage.vue')
       }
     ]
   },

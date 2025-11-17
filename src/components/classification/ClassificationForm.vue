@@ -49,14 +49,24 @@ export default {
     async onSubmit () {
       const response = await this.$axios.post('/classification', { type: this.type, description: this.description, planOfBills: this.planOfBills.value })
       console.log(response)
+      await this.refreshAll()
+      this.$emit('saved')
+      this.onReset()
+    },
+    async refreshAll () {
+      await Promise.all([
+        this.$store.dispatch('classification/getClassifications'),
+        this.$store.dispatch('planOfBills/getPlanOfBills'),
+        this.$store.dispatch('movimentation/getMovimentations')
+      ])
     },
     selectPanOfBills (planOfBills) {
       this.planOfBills = planOfBills
     },
     onReset () {
-      this.name = null
-      this.age = null
-      this.accept = false
+      this.type = ''
+      this.description = ''
+      this.planOfBills = ''
     }
   }
 }

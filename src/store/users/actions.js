@@ -1,12 +1,11 @@
-
 import service from '../../Instances/Axios'
 
-export const getPlanOfBills = async ({ commit, ...rest }, user) => {
+export const getUsers = async ({ commit }) => {
   return service
-    .get('plan-of-bills', {})
+    .get('users')
     .then(response => {
       const { data } = response
-      commit('PLANOFBILLS', data)
+      commit('USERS', data)
       return data
     })
 }

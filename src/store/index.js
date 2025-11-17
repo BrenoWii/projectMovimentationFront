@@ -4,6 +4,7 @@ import authentication from './authentication'
 import movimentation from './movimentation'
 import classification from './classification'
 import planOfBills from './plan-of-bills'
+import users from './users'
 
 // import example from './module-example'
 
@@ -24,7 +25,10 @@ export default function (/* { ssrContext } */) {
       authentication,
       movimentation,
       classification,
-      planOfBills
+      planOfBills,
+      users,
+      // Alias de compatibilidade para chamadas antigas usando 'plan-of-bills/...'
+      'plan-of-bills': planOfBills
     },
 
     // enable strict mode (adds overhead!)
