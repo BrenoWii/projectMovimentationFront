@@ -25,7 +25,7 @@ export default {
         { name: 'id', label: 'ID', field: 'id', align: 'left', sortable: true },
         { name: 'description', label: 'Descrição', field: 'description', align: 'left', sortable: true },
         { name: 'type', label: 'Tipo', field: 'type', align: 'left', sortable: true },
-        { name: 'plan', label: 'Plano de Contas', field: (row) => (row.planOfBills && row.planOfBills.description) || row.planOfBillsName || '-', align: 'left' }
+        { name: 'planOfBill', label: 'Plano de Contas', field: (row) => row.planOfBill.description, align: 'left' }
       ]
     }
   },

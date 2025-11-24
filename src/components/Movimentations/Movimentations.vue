@@ -73,13 +73,22 @@
       <template v-slot:body-cell-planOfBill="props">
         <q-td :props="props">{{ (props.row && props.row.planOfBill && props.row.planOfBill.description) || '-' }}</q-td>
       </template>
+      <template v-slot:body-cell-classification="props">
+          <q-td :props="props">{{ getClassification(props.row).description || '-' }}</q-td>
+        </template>
+        <template v-slot:body-cell-classificationType="props">
+          <q-td :props="props">{{ getClassification(props.row).type || '-' }}</q-td>
+      </template>
       <template v-slot:body-cell-value="props">
-        <q-td :props="props" :class="getMovType(props.row) === 'despesa' ? 'text-negative' : 'text-positive'">
-          {{ getMovType(props.row) === 'despesa' ? ('- ' + formatCurrency(props.row.value)) : formatCurrency(props.row.value) }}
+        <q-td :props="props" :class="getMovType(props.row) === 'DESPESA' ? 'text-negative' : 'text-positive'">
+          {{ getMovType(props.row) === 'DESPESA' ? ('- ' + formatCurrency(props.row.value)) : formatCurrency(props.row.value) }}
         </q-td>
       </template>
 
     </q-table>
+    <div class="q-mt-md text-weight-bold">
+      Total: <span :class="totalMovimentationsValue < 0 ? 'text-negative' : 'text-positive'">{{ totalMovimentationsValueDisplay }}</span>
+    </div>
   </div>
 </div>
 </template>
@@ -101,7 +110,8 @@ export default {
           headerStyle: 'width: 110px'
         },
         { name: 'payDate', align: 'left', label: 'Pagamento', field: 'payDate', sortable: true, style: 'width: 110px', headerStyle: 'width: 110px' },
-        { name: 'planOfBill', label: 'Plano de Contas', field: 'planOfBill', sortable: false },
+        { name: 'classification', label: 'Classificação', field: 'classification', sortable: false },
+        { name: 'classificationType', label: 'Tipo', field: 'classificationType', sortable: false, style: 'width: 90px', headerStyle: 'width: 90px' },
         { name: 'value', label: 'Valor', field: 'value' }
       ],
       filters: {
@@ -134,6 +144,23 @@ export default {
         label: [u.firstName, u.lastName].filter(Boolean).join(' ') + (u.email ? ` (${u.email})` : ''),
         value: u.id
       }))
+    },
+    totalMovimentationsValue () {
+      if (!Array.isArray(this.getMovimentations)) return 0
+      return this.getMovimentations.reduce((acc, row) => {
+        const raw = row && row.value
+        const num = typeof raw === 'number' ? raw : Number(raw)
+        if (!Number.isFinite(num)) return acc
+        const type = (this.getClassification(row) && this.getClassification(row).type) || ''
+        // Despesa subtrai, receita soma
+        return type === 'DESPESA' ? acc - num : acc + num
+      }, 0)
+    },
+    totalMovimentationsValueDisplay () {
+      const total = this.totalMovimentationsValue
+      const abs = Math.abs(total)
+      const formatted = this.formatCurrency(abs)
+      return total < 0 ? `- ${formatted}` : formatted
     }
   },
   methods: {
@@ -192,10 +219,15 @@ export default {
       // row.planOfBill.classification.type (preferido)
       // ou campos alternativos que o backend possa expor
       return (
-        (row && row.planOfBill && row.planOfBill.classification && row.planOfBill.classification.type) ||
         (row && row.classification && row.classification.type) ||
-        (row && row.type) ||
         ''
+      )
+    },
+    getClassification (row) {
+      if (!row) return {}
+      return (
+        row.classification ||
+        {}
       )
     }
   }

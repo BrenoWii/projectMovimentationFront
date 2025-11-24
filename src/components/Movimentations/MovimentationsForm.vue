@@ -5,11 +5,11 @@
       @submit="onSubmit"
       class="q-gutter-md movimentation-form__form"
     >
-      <q-input v-model="movimentation.date" filled type="date" hint="Data da Movimentação" />
-      <PlanOfBillsSelect v-on:change="changePlanOfBills"/>
+      <q-input v-model="date" filled type="date" hint="Data da Movimentação" />
+      <ClassificationSelect v-on:change="changeClassification" />
       <q-input
         filled
-        v-model="movimentation.value"
+        v-model="value"
         label="Valor da movimentação"
         prefix="R$"
         mask="#.##"
@@ -17,7 +17,7 @@
         reverse-fill-mask
         input-class="text-right"
       />
-      <q-input v-model="movimentation.payDate" filled type="date" hint="Data de pagamento" />
+      <q-input v-model="payDate" filled type="date" hint="Data de pagamento" />
       <div>
         <q-btn label="Submit" type="submit" color="primary"/>
         <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
@@ -28,36 +28,55 @@
 </template>
 
 <script>
-import PlanOfBillsSelect from '../plan-of-bills/PlanOfBillsSelect.vue'
+import ClassificationSelect from '../classification/ClassificationSelect.vue'
 export default {
   components: {
-    PlanOfBillsSelect
+    ClassificationSelect
   },
   data () {
     return {
-      movimentation: {
-        date: '',
-        value: '0.00',
-        payDate: '',
-        planOfBill: ''
-      }
-
+      date: '',
+      value: '0.00',
+      payDate: '',
+      classificationId: null
     }
   },
 
   methods: {
     async onSubmit () {
-      const valueCents = this.toCents(this.movimentation.value)
-      await this.$axios.post('movimentations', { ...this.movimentation, value: valueCents })
+      console.log(this)
+      const valueNumber = this.toDecimal(this.value)
+      const classificationObj = this.classificationId ? { id: this.classificationId } : null
+      // Valida obrigatórios segundo contrato
+      if (!this.date || classificationObj === null || valueNumber === null) {
+        this.$q && this.$q.notify && this.$q.notify({ type: 'negative', message: 'Preencha data, classificação e valor.' })
+        return
+      }
+      const payload = {
+        date: this.date, // formato YYYY-MM-DD já aceito pelo backend
+        value: valueNumber,
+        classification: classificationObj,
+        ...(this.payDate ? { payDate: this.payDate } : {})
+      }
+      await this.$axios.post('/movimentations', payload)
       await this.refreshAll()
+      this.$emit('saved', payload)
       this.onReset && this.onReset()
     },
-    toCents (raw) {
-      if (raw === null || raw === undefined) return 0
-      const s = String(raw)
-      // Remove tudo que não é dígito para obter centavos
-      const digits = s.replace(/\D/g, '')
-      return digits ? parseInt(digits, 10) : 0
+    toDecimal (raw) {
+      if (raw === null || raw === undefined || raw === '') return null
+      let s = String(raw).trim()
+      // Normaliza separador decimal (aceita vírgula ou ponto)
+      s = s.replace(',', '.')
+      // Remove caracteres inválidos mantendo dígitos e primeiro ponto
+      s = s.replace(/[^0-9.-]/g, '')
+      // Se múltiplos pontos, mantém apenas o primeiro
+      const parts = s.split('.')
+      if (parts.length > 2) {
+        s = parts.shift() + '.' + parts.join('')
+      }
+      const num = parseFloat(s)
+      return Number.isFinite(num) ? num : null
     },
     async refreshAll () {
       await Promise.all([
@@ -66,8 +85,9 @@ export default {
         this.$store.dispatch('movimentation/getMovimentations')
       ])
     },
-    changePlanOfBills (planOfBills) {
-      this.movimentation.planOfBill = planOfBills.value
+    changeClassification (classification) {
+      console.log(classification)
+      this.classificationId = classification
     }
   }
 }

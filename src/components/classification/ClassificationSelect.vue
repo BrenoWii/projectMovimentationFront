@@ -1,6 +1,15 @@
 <template>
   <div class="classification-select__input">
-      <q-select filled v-model="selected" :options="getClassificationsSelect" label="Classificações" />
+      <q-select
+        filled
+        v-model="selected"
+        :options="getClassificationsSelect"
+        :label="label"
+        :multiple="multiple"
+        :use-chips="multiple"
+        :emit-value="true"
+        :map-options="true"
+      />
       <q-btn size="sm" color="accent" round dense :icon="'add'" @click="openModalAdd = !openModalAdd"></q-btn>
       <q-dialog v-model="openModalAdd">
         <q-card>
@@ -27,9 +36,23 @@ export default {
   components: {
     ClassificationForm
   },
+  props: {
+    value: {
+      type: [Array, Number, String, Object, null],
+      default: null
+    },
+    multiple: {
+      type: Boolean,
+      default: false
+    },
+    label: {
+      type: String,
+      default: 'Classificações'
+    }
+  },
   data () {
     return {
-      selected: '',
+      selected: this.value || (this.multiple ? [] : ''),
       options: [],
       openModalAdd: false
     }
@@ -40,6 +63,10 @@ export default {
   watch: {
     selected (value) {
       this.$emit('change', value)
+      this.$emit('input', value)
+    },
+    value (val) {
+      this.selected = val
     }
   }
 }

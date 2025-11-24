@@ -5,7 +5,7 @@
       @reset="onReset"
       class="q-gutter-md movimentation-form__form">
       <q-input v-model="description" filled type="text" hint="Descrição da Movimentação" />
-      <planOfBills v-on:change="selectPanOfBills"></planOfBills>
+      <planOfBills v-on:change="selectPlanOfBills" />
       <q-btn-toggle
         v-model="type"
         spread
@@ -17,8 +17,8 @@
         color="white"
         text-color="primary"
         :options="[
-          {label: 'Receita', value: 'receita'},
-          {label: 'Despesa', value: 'despesa'}
+          {label: 'Receita', value: 'RECEITA'},
+          {label: 'Despesa', value: 'DESPESA'}
         ]"
       />
       <div>
@@ -41,13 +41,13 @@ export default {
     return {
       type: '',
       description: '',
-      planOfBills: ''
+      planOfBillId: null
     }
   },
 
   methods: {
     async onSubmit () {
-      const response = await this.$axios.post('/classification', { type: this.type, description: this.description, planOfBills: this.planOfBills.value })
+      const response = await this.$axios.post('/classification', this.$data)
       console.log(response)
       await this.refreshAll()
       this.$emit('saved')
@@ -60,13 +60,14 @@ export default {
         this.$store.dispatch('movimentation/getMovimentations')
       ])
     },
-    selectPanOfBills (planOfBills) {
-      this.planOfBills = planOfBills
+    selectPlanOfBills (plan) {
+      console.log(plan)
+      this.planOfBillId = plan && plan.value ? plan.value : null
     },
     onReset () {
       this.type = ''
       this.description = ''
-      this.planOfBills = ''
+      this.planOfBillId = null
     }
   }
 }
