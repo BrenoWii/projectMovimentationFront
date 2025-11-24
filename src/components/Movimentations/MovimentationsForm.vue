@@ -53,15 +53,22 @@ export default {
         return
       }
       const payload = {
-        date: this.date, // formato YYYY-MM-DD já aceito pelo backend
+        date: this.toIsoDate(this.date),
         value: valueNumber,
         classification: classificationObj,
-        ...(this.payDate ? { payDate: this.payDate } : {})
+        ...(this.payDate ? { payDate: this.toIsoDate(this.payDate) } : {})
       }
       await this.$axios.post('/movimentations', payload)
       await this.refreshAll()
       this.$emit('saved', payload)
       this.onReset && this.onReset()
+    },
+    toIsoDate (dateStr) {
+      if (!dateStr) return null
+      // Se já vier com T, assume formato ISO válido
+      if (dateStr.includes('T')) return dateStr
+      // Monta início do dia em UTC conforme exemplos do contrato
+      return `${dateStr}T00:00:00Z`
     },
     toDecimal (raw) {
       if (raw === null || raw === undefined || raw === '') return null
