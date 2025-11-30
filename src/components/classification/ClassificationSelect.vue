@@ -3,13 +3,25 @@
       <q-select
         filled
         v-model="selected"
-        :options="getClassificationsSelect"
+        :options="filteredOptions"
         :label="label"
         :multiple="multiple"
         :use-chips="multiple"
         :emit-value="true"
         :map-options="true"
-      />
+        use-input
+        input-debounce="300"
+        @filter="filterFn"
+        @filter-abort="abortFilterFn"
+      >
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              Nenhum resultado encontrado
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
       <q-btn size="sm" color="accent" round dense :icon="'add'" @click="openModalAdd = !openModalAdd"></q-btn>
       <q-dialog v-model="openModalAdd">
         <q-card>
@@ -54,11 +66,15 @@ export default {
     return {
       selected: this.value || (this.multiple ? [] : ''),
       options: [],
+      filteredOptions: [],
       openModalAdd: false
     }
   },
   computed: {
     ...mapGetters('classification', ['getClassificationsSelect'])
+  },
+  mounted () {
+    this.filteredOptions = this.getClassificationsSelect
   },
   watch: {
     selected (value) {
@@ -67,6 +83,26 @@ export default {
     },
     value (val) {
       this.selected = val
+    },
+    getClassificationsSelect (newList) {
+      this.filteredOptions = newList
+    }
+  },
+  methods: {
+    filterFn (val, update, abort) {
+      update(() => {
+        const needle = val.toLowerCase()
+        if (needle === '') {
+          this.filteredOptions = this.getClassificationsSelect
+        } else {
+          this.filteredOptions = this.getClassificationsSelect.filter(opt => {
+            return opt.label && opt.label.toLowerCase().indexOf(needle) > -1
+          })
+        }
+      })
+    },
+    abortFilterFn () {
+      this.filteredOptions = this.getClassificationsSelect
     }
   }
 }

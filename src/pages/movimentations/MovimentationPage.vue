@@ -1,18 +1,15 @@
 <template>
   <div>
-    <movimentationForm></movimentationForm>
     <Movimentations></Movimentations>
   </div>
 </template>
 
 <script lang="ts">
 import Movimentations from '../../components/Movimentations/Movimentations.vue'
-import movimentationForm from '../../components/Movimentations/MovimentationsForm.vue'
 
 export default {
   name: 'MovimentationPage',
   components: {
-    movimentationForm,
     Movimentations
   },
   async mounted () {

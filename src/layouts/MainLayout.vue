@@ -51,6 +51,12 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksData = [
   {
+    title: 'Dashboard',
+    caption: 'Resumo e Gráficos',
+    icon: 'pie_chart',
+    link: '/dashboard'
+  },
+  {
     title: 'Movimentações',
     caption: 'Movimentações registradas',
     icon: 'attach_money',
