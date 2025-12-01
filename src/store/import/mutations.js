@@ -1,14 +1,16 @@
 export function setAnalyzedData (state, { rows, stats }) {
   state.analyzedRows = rows.map(row => ({
     ...row,
-    classificationId: row.suggestedClassification ? row.suggestedClassification.id : null,
+    classificationId: row.suggestedClassificationId,
     learnMapping: false,
     selected: true,
-    suggestion: row.suggestedClassification ? {
-      id: row.suggestedClassification.id,
-      description: row.suggestedClassification.description,
-      confidence: row.suggestedClassification.confidence
-    } : null
+    suggestion: row.suggestedClassificationName ? {
+      id: row.suggestedClassificationId,
+      description: row.suggestedClassificationName,
+      confidence: row.confidence
+    } : null,
+    // Determinar tipo baseado no sinal do valor
+    type: row.value < 0 ? 'DESPESA' : 'RECEITA'
   }))
   state.stats = stats
 }

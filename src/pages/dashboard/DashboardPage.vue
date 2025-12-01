@@ -39,15 +39,31 @@
 
     <!-- Gráfico de Plano de Contas -->
     <div class="row q-col-gutter-md q-mb-md">
-      <div class="col-12">
+      <div class="col-12 col-md-6">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6">Distribuição por Plano de Contas</div>
+            <div class="text-h6">Distribuição por Plano de Contas - Despesas</div>
           </q-card-section>
           <q-separator />
           <q-card-section>
             <div v-if="planOfBillsData.length > 0">
-              <PiePlanOfBillsChart :summary="summary" />
+              <PiePlanOfBillsChart :summary="summary" summary-key="byPlanOfBills" />
+            </div>
+            <div v-else class="text-center text-grey-6 q-pa-md">
+              Nenhum dado disponível para exibir
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="col-12 col-md-6">
+        <q-card flat bordered>
+          <q-card-section>
+            <div class="text-h6">Distribuição por Plano de Contas - Receitas</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div v-if="planOfBillsReceitaData.length > 0">
+              <PiePlanOfBillsChart :summary="summary" summary-key="byPlanOfBillsReceita" />
             </div>
             <div v-else class="text-center text-grey-6 q-pa-md">
               Nenhum dado disponível para exibir
@@ -101,14 +117,29 @@
 
     <!-- Tabela de Plano de Contas -->
     <div class="row q-col-gutter-md q-mt-md">
-      <div class="col-12">
+      <div class="col-12 col-md-6">
         <q-card flat bordered>
           <q-card-section>
-            <div class="text-h6">Resumo por Plano de Contas</div>
+            <div class="text-h6 text-negative">Resumo por Plano de Contas - Despesas</div>
           </q-card-section>
           <q-separator />
           <q-list dense>
             <q-item v-for="item in sortedPlanOfBillsList" :key="item.planOfBillId">
+              <q-item-section>{{ item.planOfBillName }}</q-item-section>
+              <q-item-section side class="text-right">{{ formatCurrency(item.total) }}</q-item-section>
+              <q-item-section side class="text-right text-grey-7">{{ item.count }} mov.</q-item-section>
+            </q-item>
+          </q-list>
+        </q-card>
+      </div>
+      <div class="col-12 col-md-6">
+        <q-card flat bordered>
+          <q-card-section>
+            <div class="text-h6 text-positive">Resumo por Plano de Contas - Receitas</div>
+          </q-card-section>
+          <q-separator />
+          <q-list dense>
+            <q-item v-for="item in sortedPlanOfBillsReceitaList" :key="item.planOfBillId">
               <q-item-section>{{ item.planOfBillName }}</q-item-section>
               <q-item-section side class="text-right">{{ formatCurrency(item.total) }}</q-item-section>
               <q-item-section side class="text-right text-grey-7">{{ item.count }} mov.</q-item-section>
@@ -201,9 +232,17 @@ export default {
       const byPlanOfBills = this.summary.byPlanOfBills || []
       return byPlanOfBills.slice().sort((a, b) => b.total - a.total)
     },
+    sortedPlanOfBillsReceitaList () {
+      const byPlanOfBillsReceita = this.summary.byPlanOfBillsReceita || []
+      return byPlanOfBillsReceita.slice().sort((a, b) => b.total - a.total)
+    },
     planOfBillsData () {
       const byPlanOfBills = this.summary.byPlanOfBills || []
       return byPlanOfBills.filter(item => item.total > 0)
+    },
+    planOfBillsReceitaData () {
+      const byPlanOfBillsReceita = this.summary.byPlanOfBillsReceita || []
+      return byPlanOfBillsReceita.filter(item => item.total > 0)
     }
   },
   methods: {

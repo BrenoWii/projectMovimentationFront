@@ -49,6 +49,14 @@ describe('Movimentation Store - Actions', () => {
               total: 202234,
               count: 1
             }
+          ],
+          byPlanOfBillsReceita: [
+            {
+              planOfBillId: 1,
+              planOfBillName: 'Contas a Receber',
+              total: 202234,
+              count: 1
+            }
           ]
         }
       }
@@ -62,6 +70,49 @@ describe('Movimentation Store - Actions', () => {
     expect(commit).toHaveBeenCalledWith('MOVIMENTATIONS', mockResponse.data.movimentations)
     expect(commit).toHaveBeenCalledWith('SUMMARY', mockResponse.data.summary)
     expect(result).toEqual(mockResponse.data)
+  })
+
+  it('deve incluir byPlanOfBillsReceita na summary para receitas', async () => {
+    const mockResponse = {
+      data: {
+        movimentations: [
+          {
+            id: 1,
+            date: '2025-11-04',
+            value: 100000,
+            classification: {
+              id: 2,
+              description: 'Salário',
+              type: 'RECEITA',
+              planOfBill: {
+                id: 5,
+                description: 'Receitas'
+              }
+            }
+          }
+        ],
+        summary: {
+          byClassification: [],
+          byPlanOfBills: [],
+          byPlanOfBillsReceita: [
+            {
+              planOfBillId: 5,
+              planOfBillName: 'Receitas',
+              total: 100000,
+              count: 1
+            }
+          ]
+        }
+      }
+    }
+
+    mockAxios.get.mockResolvedValue(mockResponse)
+
+    await getMovimentations({ commit }, {})
+
+    const summaryCall = commit.mock.calls.find(call => call[0] === 'SUMMARY')
+    expect(summaryCall[1].byPlanOfBillsReceita).toBeDefined()
+    expect(summaryCall[1].byPlanOfBillsReceita[0].planOfBillName).toBe('Receitas')
   })
 
   it('deve filtrar parâmetros vazios da query string', async () => {

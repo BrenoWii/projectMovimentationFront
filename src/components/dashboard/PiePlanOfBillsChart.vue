@@ -9,14 +9,17 @@ export default {
       type: Object,
       required: true,
       default: () => ({})
+    },
+    summaryKey: {
+      type: String,
+      default: 'byPlanOfBills'
     }
   },
   computed: {
     planOfBillsData () {
-      const byPlanOfBills = this.summary.byPlanOfBills || []
-      console.log('PiePlanOfBillsChart - summary:', this.summary)
-      console.log('PiePlanOfBillsChart - byPlanOfBills:', byPlanOfBills)
-      return byPlanOfBills.filter(item => item.total > 0)
+      const data = this.summary[this.summaryKey] || []
+      console.log(`PiePlanOfBillsChart - ${this.summaryKey}:`, data)
+      return data.filter(item => item.total > 0)
     },
     totalValue () {
       return this.planOfBillsData.reduce((acc, item) => acc + item.total, 0)

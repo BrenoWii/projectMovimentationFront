@@ -13,7 +13,9 @@ export async function analyzeFile ({ commit }, file) {
     })
 
     const { rows, stats } = response.data
+    console.log('Dados recebidos do backend:', { rows, stats })
     commit('setAnalyzedData', { rows, stats })
+    console.log('Analyzed rows após mutation:', rows)
     return response.data
   } catch (error) {
     console.error('Erro ao analisar arquivo:', error)
@@ -27,12 +29,14 @@ export async function importBulk ({ commit, state }) {
   commit('setIsImporting', true)
   try {
     const items = state.analyzedRows
-      .filter(row => row.classificationId)
+      .filter(row => row.classificationId && row.selected)
       .map(row => ({
         date: row.date,
         value: row.value,
         description: row.description,
-        classificationId: row.classificationId
+        originalDescription: row.description,
+        classificationId: row.classificationId,
+        learnMapping: row.learnMapping
       }))
 
     const learnFromImport = state.analyzedRows.some(row => row.learnMapping)
