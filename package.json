@@ -7,8 +7,14 @@
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",
-    "test": "echo \"No test specified\" && exit 0",
-    "start:dev": "quasar dev"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "start:dev": "quasar dev",
+    "build": "quasar build",
+    "serve": "http-server dist/spa -p 8080 -a 0.0.0.0 -c-1",
+    "start": "yarn build && yarn serve"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
@@ -23,6 +29,7 @@
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
+    "@vitest/coverage-v8": "^0.34.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
@@ -31,7 +38,10 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
-    "eslint-plugin-vue": "^6.1.2"
+    "eslint-plugin-vue": "^6.1.2",
+    "happy-dom": "^12.10.0",
+    "http-server": "^14.1.1",
+    "vitest": "^0.34.0"
   },
   "browserslist": [
     "ie >= 11",

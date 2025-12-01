@@ -61,6 +61,24 @@ const routes = [
       }
     ]
   },
+  {
+    path: '/import',
+    component: () => import('../layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/import', component: () => import('../pages/import/ImportPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/mappings',
+    component: () => import('../layouts/MainLayout.vue'),
+    children: [
+      {
+        path: '/mappings', component: () => import('../pages/import/MappingsPage.vue')
+      }
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it

@@ -14,6 +14,16 @@
         @filter="filterFn"
         @filter-abort="abortFilterFn"
       >
+        <template v-slot:option="scope">
+          <q-item v-bind="scope.itemProps" v-on="scope.itemEvents">
+            <q-item-section>
+              <q-item-label :class="getTypeClass(scope.opt.type)">{{ scope.opt.label }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+        <template v-slot:selected-item="scope">
+          <span :class="getTypeClass(scope.opt.type)">{{ scope.opt.label }}</span>
+        </template>
         <template v-slot:no-option>
           <q-item>
             <q-item-section class="text-grey">
@@ -103,6 +113,14 @@ export default {
     },
     abortFilterFn () {
       this.filteredOptions = this.getClassificationsSelect
+    },
+    getTypeClass (type) {
+      if (type === 'RECEITA') {
+        return 'text-positive'
+      } else if (type === 'DESPESA') {
+        return 'text-negative'
+      }
+      return ''
     }
   }
 }

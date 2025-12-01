@@ -1,6 +1,6 @@
 export default function () {
   return {
-    movimentations: [],
-    summary: {}
+    mappings: [],
+    isLoading: false
   }
 }

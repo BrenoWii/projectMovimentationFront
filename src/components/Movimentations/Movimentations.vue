@@ -322,6 +322,14 @@ export default {
         {}
       )
     }
+  },
+  mounted () {
+    // Carregar dados necessários
+    this.$store.dispatch('planOfBills/getPlanOfBills')
+    this.$store.dispatch('classification/getClassifications')
+    this.$store.dispatch('users/getUsers')
+    // Carregar movimentações iniciais
+    this.fetchMovs()
   }
 }
 </script>

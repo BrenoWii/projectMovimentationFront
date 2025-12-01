@@ -30,10 +30,30 @@
     <!-- Gráficos lado a lado -->
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-md-6">
-        <PieClassificationChart :movimentation-type="'RECEITA'" :filtered-data="filteredMovimentations" title="Receitas" />
+        <PieClassificationChart :movimentation-type="'RECEITA'" :filtered-data="filteredMovimentations" title="Receitas por Classificação" />
       </div>
       <div class="col-12 col-md-6">
-        <PieClassificationChart :movimentation-type="'DESPESA'" :filtered-data="filteredMovimentations" title="Despesas" />
+        <PieClassificationChart :movimentation-type="'DESPESA'" :filtered-data="filteredMovimentations" title="Despesas por Classificação" />
+      </div>
+    </div>
+
+    <!-- Gráfico de Plano de Contas -->
+    <div class="row q-col-gutter-md q-mb-md">
+      <div class="col-12">
+        <q-card flat bordered>
+          <q-card-section>
+            <div class="text-h6">Distribuição por Plano de Contas</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div v-if="planOfBillsData.length > 0">
+              <PiePlanOfBillsChart :summary="summary" />
+            </div>
+            <div v-else class="text-center text-grey-6 q-pa-md">
+              Nenhum dado disponível para exibir
+            </div>
+          </q-card-section>
+        </q-card>
       </div>
     </div>
 
@@ -78,14 +98,34 @@
         </q-card>
       </div>
     </div>
+
+    <!-- Tabela de Plano de Contas -->
+    <div class="row q-col-gutter-md q-mt-md">
+      <div class="col-12">
+        <q-card flat bordered>
+          <q-card-section>
+            <div class="text-h6">Resumo por Plano de Contas</div>
+          </q-card-section>
+          <q-separator />
+          <q-list dense>
+            <q-item v-for="item in sortedPlanOfBillsList" :key="item.planOfBillId">
+              <q-item-section>{{ item.planOfBillName }}</q-item-section>
+              <q-item-section side class="text-right">{{ formatCurrency(item.total) }}</q-item-section>
+              <q-item-section side class="text-right text-grey-7">{{ item.count }} mov.</q-item-section>
+            </q-item>
+          </q-list>
+        </q-card>
+      </div>
+    </div>
   </q-page>
 </template>
 <script>
 import PieClassificationChart from '../../components/dashboard/PieClassificationChart.vue'
+import PiePlanOfBillsChart from '../../components/dashboard/PiePlanOfBillsChart.vue'
 import { mapGetters } from 'vuex'
 export default {
   name: 'DashboardPage',
-  components: { PieClassificationChart },
+  components: { PieClassificationChart, PiePlanOfBillsChart },
   data () {
     return {
       periodMonth: this.getCurrentYearMonth()
@@ -95,7 +135,14 @@ export default {
     this.ensureMovimentationsLoaded()
   },
   computed: {
-    ...mapGetters('movimentation', ['getMovimentations']),
+    ...mapGetters('movimentation', ['getMovimentations', 'getSummary']),
+    ...mapGetters('authentication', ['getUser']),
+    userId () {
+      return this.getUser && this.getUser.user && this.getUser.user.id ? this.getUser.user.id : null
+    },
+    summary () {
+      return this.getSummary || {}
+    },
     periodDisplay () {
       if (!this.periodMonth) return 'Todos os períodos'
       const [year, month] = this.periodMonth.split('-')
@@ -149,6 +196,14 @@ export default {
     },
     totalDespesas () {
       return Object.values(this.dataByClassificationType.despesas).reduce((acc, val) => acc + val, 0)
+    },
+    sortedPlanOfBillsList () {
+      const byPlanOfBills = this.summary.byPlanOfBills || []
+      return byPlanOfBills.slice().sort((a, b) => b.total - a.total)
+    },
+    planOfBillsData () {
+      const byPlanOfBills = this.summary.byPlanOfBills || []
+      return byPlanOfBills.filter(item => item.total > 0)
     }
   },
   methods: {
@@ -168,8 +223,9 @@ export default {
     },
     ensureMovimentationsLoaded () {
       const list = this.getMovimentations
+      const params = this.userId ? { userId: this.userId } : {}
       if (!Array.isArray(list) || list.length === 0) {
-        this.$store.dispatch('movimentation/getMovimentations').catch(err => {
+        this.$store.dispatch('movimentation/getMovimentations', params).catch(err => {
           console.error('Falha ao carregar movimentações para dashboard', err)
         })
       }

@@ -27,16 +27,33 @@ const Router = (/* { store, ssrContext } */) => {
     // Rotas públicas que não exigem autenticação
     const publicPages = ['/login', '/login/create-login']
     const authRequired = !publicPages.includes(to.path)
-    const loggedIn = localStorage.getItem('user')
+    const userString = localStorage.getItem('user')
     const logout = to.path === '/logout'
 
-    if (authRequired && !loggedIn) {
-      return next('/login')
-    }
+    // Verifica se está fazendo logout
     if (logout) {
       localStorage.clear()
       return next('/login')
     }
+
+    // Valida se o usuário está autenticado e tem um token válido
+    let loggedIn = false
+    if (userString) {
+      try {
+        const user = JSON.parse(userString)
+        loggedIn = user && user.accessToken
+      } catch (e) {
+        // Se houver erro ao parsear, limpa o localStorage
+        localStorage.removeItem('user')
+        loggedIn = false
+      }
+    }
+
+    // Redireciona para login se autenticação for necessária e usuário não estiver logado
+    if (authRequired && !loggedIn) {
+      return next('/login')
+    }
+
     next()
   })
 

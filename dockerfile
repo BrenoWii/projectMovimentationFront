@@ -1,10 +1,29 @@
-FROM node:10
-WORKDIR /home/quasar/project
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
-COPY . /home/quasar/project
+WORKDIR /app
 
-RUN npm install -g @vue/cli
-RUN npm install -g @quasar/cli
-RUN npm install
+# Copiar package.json e yarn.lock
+COPY package.json yarn.lock ./
 
-EXPOSE 8080
+# Instalar dependências
+RUN yarn install --frozen-lockfile
+
+# Copiar código fonte
+COPY . .
+
+# Build da aplicação
+RUN yarn build
+
+# Stage 2: Production
+FROM nginx:alpine
+
+# Copiar arquivos buildados
+COPY --from=builder /app/dist/spa /usr/share/nginx/html
+
+# Copiar configuração customizada do nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

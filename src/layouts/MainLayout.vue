@@ -15,7 +15,20 @@
           Fluxo de caixa App
         </q-toolbar-title>
 
-        <div></div>
+        <div class="q-mr-md text-weight-medium">
+          {{ userName }}
+        </div>
+
+        <q-btn
+          flat
+          dense
+          round
+          icon="logout"
+          aria-label="Logout"
+          @click="logout"
+        >
+          <q-tooltip>Sair</q-tooltip>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -47,6 +60,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import EssentialLink from 'components/EssentialLink.vue'
 
 const linksData = [
@@ -61,6 +75,18 @@ const linksData = [
     caption: 'Movimentações registradas',
     icon: 'attach_money',
     link: '/movimentation'
+  },
+  {
+    title: 'Importar Extrato',
+    caption: 'Upload de CSV bancário',
+    icon: 'cloud_upload',
+    link: '/import'
+  },
+  {
+    title: 'Mapeamentos',
+    caption: 'Gerenciar aprendizado',
+    icon: 'psychology',
+    link: '/mappings'
   },
   {
     title: 'Usuários',
@@ -86,6 +112,33 @@ export default {
     return {
       leftDrawerOpen: false,
       essentialLinks: linksData
+    }
+  },
+  computed: {
+    ...mapGetters('authentication', ['getUserName']),
+    userName () {
+      return this.getUserName
+    }
+  },
+  mounted () {
+    // Carregar usuário do localStorage se existir
+    const user = localStorage.getItem('user')
+    if (user) {
+      try {
+        const userData = JSON.parse(user)
+        console.log('Dados do usuário:', userData)
+        this.$store.commit('authentication/USER_LOGIN', userData)
+      } catch (e) {
+        console.error('Erro ao carregar usuário:', e)
+      }
+    }
+  },
+  methods: {
+    logout () {
+      // Limpar token do localStorage
+      localStorage.removeItem('token')
+      // Redirecionar para login
+      this.$router.push('/login')
     }
   }
 }

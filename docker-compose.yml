@@ -1,12 +1,18 @@
-version: '3'
+version: '3.8'
 services:
-  project:
-    container_name: project
-    build: .
-    command: quasar dev
-    volumes:
-      - .:/home/quasar/project
+  frontend:
+    container_name: movimentation-frontend
+    build:
+      context: .
+      dockerfile: dockerfile
     ports:
-      - "8080:8080"
+      - "8080:80"
+    restart: unless-stopped
     environment:
-      - NODE_ENV=${NODE_ENV}
+      - API_BASE_URL=http://100.113.154.3:3000/api/
+    networks:
+      - movimentation-network
+
+networks:
+  movimentation-network:
+    driver: bridge

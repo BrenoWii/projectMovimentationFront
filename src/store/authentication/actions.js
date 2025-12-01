@@ -15,12 +15,14 @@ export const authUser = async ({ commit, ...rest }, user) => {
         commit('USER_LOGIN', data)
         return data
       }
+      return null
     })
     .catch((err) => {
       console.log(err)
-      return Notify.create({
+      Notify.create({
         type: 'negative',
         message: 'Usuário ou senha incorretos'
       })
+      return null
     })
 }

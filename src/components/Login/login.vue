@@ -49,7 +49,7 @@ export default {
       const payload = { login: this.login, password: this.password }
       const result = await this.authUser(payload)
 
-      if (result) {
+      if (result && result.accessToken) {
         this.$router.push('/movimentation')
       }
     }

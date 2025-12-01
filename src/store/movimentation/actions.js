@@ -21,7 +21,9 @@ export const getMovimentations = async ({ commit }, params = {}) => {
     .get('movimentations', { params: qp })
     .then(response => {
       const { data } = response
-      commit('MOVIMENTATIONS', data)
+      // API retorna { movimentations: [...], summary: {...} }
+      commit('MOVIMENTATIONS', data.movimentations || [])
+      commit('SUMMARY', data.summary || {})
       return data
     })
 }

@@ -5,6 +5,8 @@ import movimentation from './movimentation'
 import classification from './classification'
 import planOfBills from './plan-of-bills'
 import users from './users'
+import importModule from './import'
+import mappings from './mappings'
 
 // import example from './module-example'
 
@@ -27,6 +29,8 @@ export default function (/* { ssrContext } */) {
       classification,
       planOfBills,
       users,
+      import: importModule,
+      mappings,
       // Alias de compatibilidade para chamadas antigas usando 'plan-of-bills/...'
       'plan-of-bills': planOfBills
     },
