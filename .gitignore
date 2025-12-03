@@ -3,6 +3,15 @@
 node_modules
 .vscode
 
+# Environment variables - NUNCA commitar com valores reais
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Security documentation - local only
+SECURITY.md
+
 # Quasar core related directories
 .quasar
 /dist

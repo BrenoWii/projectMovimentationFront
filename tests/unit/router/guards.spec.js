@@ -36,7 +36,7 @@ describe('Router Guards', () => {
       publicPages.forEach(path => {
         const to = { path }
         const from = { path: '/' }
-        
+
         // Simular guard
         const authRequired = !publicPages.includes(to.path)
         const loggedIn = localStorage.getItem('user')
@@ -66,7 +66,7 @@ describe('Router Guards', () => {
 
       expect(authRequired).toBe(true)
       expect(loggedIn).toBe(false)
-      
+
       // Guard deve chamar next('/login')
       if (authRequired && !loggedIn) {
         next('/login')
@@ -99,7 +99,7 @@ describe('Router Guards', () => {
 
       expect(authRequired).toBe(true)
       expect(loggedIn).toBe(true)
-      
+
       // Guard deve chamar next() sem argumentos
       if (!authRequired || loggedIn) {
         next()
@@ -129,7 +129,7 @@ describe('Router Guards', () => {
 
       expect(loggedIn).toBe(false)
       expect(localStorage.getItem('user')).toBeNull()
-      
+
       if (authRequired && !loggedIn) {
         next('/login')
       }
@@ -160,7 +160,7 @@ describe('Router Guards', () => {
       }
 
       expect(loggedIn).toBe(false)
-      
+
       if (authRequired && !loggedIn) {
         next('/login')
       }

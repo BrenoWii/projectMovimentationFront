@@ -12,7 +12,9 @@ RUN yarn install --frozen-lockfile
 # Copiar código fonte
 COPY . .
 
-# Build da aplicação
+# Build da aplicação com API_BASE_URL
+ARG API_BASE_URL=http://host.docker.internal:3000/api/
+ENV API_BASE_URL=${API_BASE_URL}
 RUN yarn build
 
 # Stage 2: Production

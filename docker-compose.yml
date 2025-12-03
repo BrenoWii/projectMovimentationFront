@@ -5,11 +5,11 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+      args:
+        - API_BASE_URL=http://host.docker.internal:3000/api/
     ports:
       - "8080:80"
     restart: unless-stopped
-    environment:
-      - API_BASE_URL=http://100.113.154.3:3000/api/
     networks:
       - movimentation-network
 

@@ -47,7 +47,7 @@ describe('PiePlanOfBillsChart - Props and Computed', () => {
           summaryKey: 'byPlanOfBillsReceita'
         })
       }
-      
+
       expect(componentWithReceita.data().summaryKey).toBe('byPlanOfBillsReceita')
     })
   })
@@ -73,7 +73,7 @@ describe('PiePlanOfBillsChart - Props and Computed', () => {
         byPlanOfBills: [{ planOfBillId: 1, total: 100 }]
       }
 
-      const data = summary['byPlanOfBillsReceita'] || []
+      const data = summary.byPlanOfBillsReceita || []
       expect(data).toEqual([])
     })
 
@@ -190,11 +190,11 @@ describe('PiePlanOfBillsChart - Dynamic summaryKey Usage', () => {
     }
 
     // Quando summaryKey é 'byPlanOfBills'
-    const despesaData = summary['byPlanOfBills'] || []
+    const despesaData = summary.byPlanOfBills || []
     expect(despesaData[0].planOfBillName).toBe('Despesa 1')
 
     // Quando summaryKey é 'byPlanOfBillsReceita'
-    const receitaData = summary['byPlanOfBillsReceita'] || []
+    const receitaData = summary.byPlanOfBillsReceita || []
     expect(receitaData[0].planOfBillName).toBe('Receita 1')
   })
 
@@ -209,7 +209,7 @@ describe('PiePlanOfBillsChart - Dynamic summaryKey Usage', () => {
     }
 
     const keys = ['byPlanOfBills', 'byPlanOfBillsReceita']
-    
+
     keys.forEach(key => {
       const data = summary[key]
       expect(data).toBeDefined()

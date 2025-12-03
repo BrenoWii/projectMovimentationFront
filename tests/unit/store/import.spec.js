@@ -43,20 +43,20 @@ describe('Import Store - Mutations', () => {
       setAnalyzedData(state, payload)
 
       expect(state.analyzedRows).toHaveLength(2)
-      
+
       // Primeira linha - DESPESA (valor negativo)
       expect(state.analyzedRows[0].type).toBe('DESPESA')
       expect(state.analyzedRows[0].classificationId).toBe(1)
       expect(state.analyzedRows[0].learnMapping).toBe(false)
       expect(state.analyzedRows[0].selected).toBe(true)
       expect(state.analyzedRows[0].suggestion.description).toBe('Gastos')
-      
+
       // Segunda linha - RECEITA (valor positivo)
       expect(state.analyzedRows[1].type).toBe('RECEITA')
       expect(state.analyzedRows[1].classificationId).toBe(2)
       expect(state.analyzedRows[1].learnMapping).toBe(false)
       expect(state.analyzedRows[1].selected).toBe(true)
-      
+
       expect(state.stats).toEqual({ total: 2, withSuggestion: 2, withoutSuggestion: 0 })
     })
 
@@ -228,10 +228,10 @@ describe('Import Store - Actions', () => {
       expect(callArgs.items).toHaveLength(2)
       expect(callArgs.items[0].description).toBe('Compra')
       expect(callArgs.items[1].description).toBe('Receita')
-      
+
       // Verificar que learnMapping foi enviado corretamente
       expect(callArgs.learnFromImport).toBe(true)
-      
+
       expect(commit).toHaveBeenCalledWith('setIsImporting', true)
       expect(commit).toHaveBeenCalledWith('clearAnalyzedData')
       expect(commit).toHaveBeenCalledWith('setIsImporting', false)

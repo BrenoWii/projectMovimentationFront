@@ -17,7 +17,7 @@
 <script>
 import { Pie, mixins } from 'vue-chartjs'
 import { mapGetters } from 'vuex'
-// Wrapper component using mixin for reactive props pattern
+// Wrapper component usando reatividade do vue-chartjs
 const { reactiveProp } = mixins
 const PieChartCanvas = {
   name: 'pie-chart-canvas',
@@ -28,7 +28,35 @@ const PieChartCanvas = {
     chartOptions: { type: Object, required: true }
   },
   mounted () {
-    this.renderChart(this.chartData, this.chartOptions)
+    if (this.chartData && this.chartData.labels && this.chartData.labels.length > 0) {
+      this.renderChart(this.chartData, this.chartOptions)
+    }
+  },
+  watch: {
+    chartData: {
+      handler (newData) {
+        if (newData && newData.labels && newData.labels.length > 0) {
+          if (this.$data._chart) {
+            this.$data._chart.destroy()
+          }
+          this.$nextTick(() => {
+            this.renderChart(newData, this.chartOptions)
+          })
+        }
+      },
+      deep: true
+    },
+    chartOptions: {
+      handler (newOptions) {
+        if (this.$data._chart && this.chartData && this.chartData.labels && this.chartData.labels.length > 0) {
+          this.$data._chart.destroy()
+          this.$nextTick(() => {
+            this.renderChart(this.chartData, newOptions)
+          })
+        }
+      },
+      deep: true
+    }
   }
 }
 
@@ -45,28 +73,29 @@ export default {
       type: String,
       default: ''
     },
-    filteredData: {
-      type: Array,
-      default: null
+    summary: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {
-    ...mapGetters('movimentation', ['getMovimentations']),
+    ...mapGetters('movimentation', ['getSummary']),
+    byClassification () {
+      return this.summary && this.summary.byClassification ? this.summary.byClassification : (this.getSummary && this.getSummary.byClassification ? this.getSummary.byClassification : [])
+    },
     dataByClassification () {
       const acc = {}
-      const list = this.filteredData || (Array.isArray(this.getMovimentations) ? this.getMovimentations : [])
-      list.forEach(row => {
-        const classification = (row && row.classification) || (row && row.planOfBill && row.planOfBill.classification) || null
-        if (!classification) return
+      const list = Array.isArray(this.byClassification) ? this.byClassification : []
+
+      list.forEach(item => {
         // Filtrar por tipo se prop estiver definida
-        if (this.movimentationType && classification.type !== this.movimentationType) return
-        const key = classification.description || 'Sem descrição'
-        const rawVal = row && row.value
-        const num = typeof rawVal === 'number' ? rawVal : Number(rawVal)
-        if (!Number.isFinite(num)) return
-        const realVal = Math.abs(num) / 100
-        acc[key] = (acc[key] || 0) + realVal
+        if (this.movimentationType && item.type !== this.movimentationType) return
+        const key = item.classificationName || 'Sem descrição'
+        const value = item.total / 100 // Converter de centavos para reais
+        acc[key] = (acc[key] || 0) + value
       })
+
+      console.log(`[PieClassificationChart] ${this.movimentationType}:`, acc, 'byClassification:', this.byClassification)
       return acc
     },
     totalValue () {

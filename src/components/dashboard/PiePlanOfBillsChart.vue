@@ -96,10 +96,20 @@ export default {
   watch: {
     summary: {
       handler () {
-        this.$data._chart.destroy()
+        if (this.$data._chart) {
+          this.$data._chart.destroy()
+        }
         this.renderChart(this.chartData, this.chartOptions)
       },
       deep: true
+    },
+    summaryKey: {
+      handler () {
+        if (this.$data._chart) {
+          this.$data._chart.destroy()
+        }
+        this.renderChart(this.chartData, this.chartOptions)
+      }
     }
   },
   mounted () {

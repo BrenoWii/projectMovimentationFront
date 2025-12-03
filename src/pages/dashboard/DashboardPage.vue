@@ -30,10 +30,10 @@
     <!-- Gráficos lado a lado -->
     <div class="row q-col-gutter-md q-mb-md">
       <div class="col-12 col-md-6">
-        <PieClassificationChart :movimentation-type="'RECEITA'" :filtered-data="filteredMovimentations" title="Receitas por Classificação" />
+        <PieClassificationChart :movimentation-type="'RECEITA'" :summary="summary" title="Receitas por Classificação" />
       </div>
       <div class="col-12 col-md-6">
-        <PieClassificationChart :movimentation-type="'DESPESA'" :filtered-data="filteredMovimentations" title="Despesas por Classificação" />
+        <PieClassificationChart :movimentation-type="'DESPESA'" :summary="summary" title="Despesas por Classificação" />
       </div>
     </div>
 
